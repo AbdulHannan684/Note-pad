@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>📒 yellow notepad · multi‑page</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #5f5f5f;  /* neutral grey background to pop the yellow */
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+
+        .notepad-wrapper {
+            width: 100%;
+            max-width: 860px;
+            margin: auto;
+        }
+
+        .notepad-card {
+            background: #faf9f0;
+            border-radius: 32px 32px 28px 28px;
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.3), 0 6px 10px rgba(0, 0, 0, 0.2);
+            padding: 24px 22px 30px 22px;
+            transition: all 0.2s;
+            border: 1px solid #e5d9b3;
+        }
+
+        h1 {
+            text-align: center;
+            font-weight: 500;
+            font-size: 2.1rem;
+            letter-spacing: 1px;
+            color: #2e2e1f;
+            margin-top: 0;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        h1 span {
+            font-size: 2.4rem;
+        }
+
+        /* toolbar — friendly fat fingers on mobile */
+        .button-strip {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .btn {
+            background: #3b3b2c;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 500;
+            padding: 14px 20px;
+            min-width: 115px;
+            border-radius: 60px;
+            box-shadow: 0 4px 0 #1f1f15;
+            cursor: pointer;
+            transition: all 0.08s linear;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border: 1px solid #666644;
+            flex: 0 1 auto;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+            background-color: #4f4f38;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            transform: translateY(0);
+            box-shadow: 0 4px 0 #1f1f15;
+            background: #77775e;
+            pointer-events: none;
+        }
+
+        /* page indicator */
+        .page-counter {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: #e5ddb5;
+            display: inline-block;
+            padding: 10px 30px;
+            margin: 0 auto 20px auto;
+            border-radius: 100px;
+            color: #2b2b16;
+            box-shadow: inset 0 -2px 5px rgba(0,0,0,0.08);
+            letter-spacing: 0.5px;
+            width: fit-content;
+            border: 1px solid #c9bc86;
+        }
+
+        /* ----- THE YELLOW PAGE (TEXTAREA) ----- */
+        .yellow-page {
+            width: 100%;
+            background-color: #fffacd;   /* classic legal pad yellow */
+            color: #000000;              /* black text */
+            border: 4px solid #d8b97a;
+            border-radius: 20px;
+            padding: 25px 18px 18px 22px;
+            font-family: 'Courier New', 'Andale Mono', monospace;
+            font-size: 1.4rem;
+            line-height: 2rem;            /* helps readability */
+            resize: vertical;
+            min-height: 380px;
+            max-height: 80vh;
+            box-shadow: inset 0 0 0 2px #ffeeaa, 0 12px 20px -8px #3d3d1a;
+            outline: none;
+            transition: border 0.1s;
+            -webkit-appearance: none;
+            background-image: 
+                repeating-linear-gradient(
+                    transparent 0px,
+                    transparent 29px,
+                    #bdb57f 29px,
+                    #bdb57f 30px
+                );  /* very faint paper line – adds notepad vibe */
+            background-attachment: local;   /* lines scroll with text */
+        }
+
+        .yellow-page:focus {
+            border-color: #ac8e5a;
+            box-shadow: inset 0 0 0 2px #ffeeaa, 0 14px 22px -6px #2e2e0b;
+        }
+
+        /* mobile fine-tuning */
+        @media (max-width: 600px) {
+            .notepad-card {
+                padding: 18px 14px 22px 14px;
+                border-radius: 28px 28px 24px 24px;
+            }
+            h1 {
+                font-size: 1.9rem;
+                margin-bottom: 10px;
+            }
+            .btn {
+                font-size: 1.1rem;
+                padding: 15px 12px;
+                min-width: 90px;
+            }
+            .page-counter {
+                font-size: 1.3rem;
+                padding: 8px 20px;
+            }
+            .yellow-page {
+                font-size: 1.2rem;
+                line-height: 1.8rem;
+                padding: 20px 14px 14px 18px;
+                min-height: 50vh;
+                background-image: 
+                    repeating-linear-gradient(
+                        transparent 0px,
+                        transparent 27px,
+                        #bdb57f 27px,
+                        #bdb57f 28px
+                    );
+            }
+        }
+
+        /* small landscape phones */
+        @media (max-width: 380px) {
+            .btn {
+                font-size: 1rem;
+                padding: 12px 8px;
+                min-width: 75px;
+            }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 22px;
+            color: #3d3d2b;
+            font-weight: 400;
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+<div class="notepad-wrapper">
+    <div class="notepad-card">
+        <h1>
+            <span>📘</span> note pad <span>📗</span>
+        </h1>
+
+        <!-- buttons row -->
+        <div class="button-strip">
+            <button class="btn" id="prevBtn" title="previous page">◀ Prev</button>
+            <button class="btn" id="nextBtn" title="next page">Next ▶</button>
+            <button class="btn" id="addBtn" title="add new blank page">➕ Add</button>
+            <button class="btn" id="deleteBtn" title="delete current page">✖ Delete</button>
+        </div>
+
+        <!-- page number indicator -->
+        <div style="display: flex; justify-content: center;">
+            <div id="pageIndicator" class="page-counter">Page 1 of 1</div>
+        </div>
+
+        <!-- the yellow notepad area (editable) -->
+        <textarea id="notepadField" class="yellow-page" placeholder="write anything on your note pad✍️" spellcheck="false"></textarea>
+
+        <footer>⚡ E-mail: choudaryabdulhannanarain2010@gmail.com</footer>
+    </div>
+</div>
+
+<script>
+(function() {
+    // ========== storage key ==========
+    const STORAGE_KEY = 'yellow_notepad_multi';
+
+    // ========== DOM elements ==========
+    const textarea = document.getElementById('notepadField');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const addBtn = document.getElementById('addBtn');
+    const deleteBtn = document.getElementById('deleteBtn');
+    const pageSpan = document.getElementById('pageIndicator');
+
+    // ========== application state ==========
+    let pages = [];          // array of strings (each page content)
+    let currentIdx = 0;      // zero-based index
+
+    // ========== load from localStorage ==========
+    function loadPages() {
+        try {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                const parsed = JSON.parse(stored);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    // ensure all entries are strings (corruption guard)
+                    pages = parsed.map(p => (typeof p === 'string' ? p : ''));
+                    return;
+                }
+            }
+        } catch (e) {
+            console.warn('localStorage read failed, start fresh');
+        }
+        // default: one empty page
+        pages = [''];
+    }
+
+    // ========== save to localStorage ==========
+    function persistPages() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(pages));
+        } catch (e) {
+            console.warn('failed to save pages');
+        }
+    }
+
+    // ========== render active page & button states ==========
+    function refreshUI() {
+        // clamp index (safety)
+        if (currentIdx < 0) currentIdx = 0;
+        if (currentIdx >= pages.length) currentIdx = pages.length - 1;
+        if (pages.length === 0) { // should never happen, but be defensive
+            pages = [''];
+            currentIdx = 0;
+        }
+
+        // set textarea content (preserve cursor)
+        textarea.value = pages[currentIdx] ?? '';
+
+        // update page indicator (human readable 1‑based)
+        pageSpan.innerText = `Page ${currentIdx + 1} of ${pages.length}`;
+
+        // enable/disable prev/next/delete
+        prevBtn.disabled = (currentIdx <= 0);
+        nextBtn.disabled = (currentIdx >= pages.length - 1);
+        deleteBtn.disabled = (pages.length <= 1);
+    }
+
+    // ========== synchronize current page content from textarea ==========
+    function saveCurrentFromTextarea() {
+        if (pages.length > 0 && currentIdx >= 0 && currentIdx < pages.length) {
+            pages[currentIdx] = textarea.value;
+        }
+    }
+
+    // ========== universal update: save page & persist & refresh ==========
+    function fullUpdate() {
+        // first grab latest from textarea (important before any switch)
+        saveCurrentFromTextarea();
+        persistPages();
+        refreshUI();
+    }
+
+    // ========== EVENT: input typing ==========
+    textarea.addEventListener('input', function() {
+        // live update the pages array
+        if (pages.length > 0 && currentIdx >= 0 && currentIdx < pages.length) {
+            pages[currentIdx] = textarea.value;
+        }
+        // debounced save? but we save immediately (lightweight)
+        persistPages();
+        // no need to refreshUI, only page content changes
+    });
+
+    // ========== prev page ==========
+    function goPrev() {
+        if (currentIdx > 0) {
+            saveCurrentFromTextarea();   // store current before moving
+            currentIdx--;
+            refreshUI();
+            textarea.focus();
+        }
+    }
+
+    // ========== next page ==========
+    function goNext() {
+        if (currentIdx < pages.length - 1) {
+            saveCurrentFromTextarea();
+            currentIdx++;
+            refreshUI();
+            textarea.focus();
+        }
+    }
+
+    // ========== add new page ==========
+    function addPage() {
+        saveCurrentFromTextarea();      // save what's currently written
+        pages.push('');                 // new blank page at the end
+        currentIdx = pages.length - 1;
+        persistPages();
+        refreshUI();
+        textarea.focus();
+    }
+
+    // ========== delete current page ==========
+    function deletePage() {
+        if (pages.length <= 1) {
+            return;  // never delete the very last page
+        }
+        // save current content before deletion (though it's about to be removed)
+        // but we want to keep other pages unchanged
+        // we do NOT need to save current into array because we discard it.
+        // but we must not lose other pages' data.
+        // simply remove the page at currentIdx
+        pages.splice(currentIdx, 1);
+        // adjust index if necessary
+        if (currentIdx >= pages.length) {
+            currentIdx = pages.length - 1;
+        }
+        persistPages();
+        refreshUI();
+        textarea.focus();
+    }
+
+    // ========== attach button events ==========
+    prevBtn.addEventListener('click', goPrev);
+    nextBtn.addEventListener('click', goNext);
+    addBtn.addEventListener('click', addPage);
+    deleteBtn.addEventListener('click', deletePage);
+
+    // ========== initialise ==========
+    loadPages();
+    currentIdx = 0;               // always start on first page
+    refreshUI();
+
+    // ========== extra safety: save before page unload ==========
+    window.addEventListener('beforeunload', function() {
+        saveCurrentFromTextarea();
+        persistPages();
+    });
+
+    // ========== optional: handle visibility change ==========
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'hidden') {
+            saveCurrentFromTextarea();
+            persistPages();
+        }
+    });
+
+    // ========== make sure textarea lost focus doesn't lose data ==========
+    textarea.addEventListener('blur', function() {
+        saveCurrentFromTextarea();
+        persistPages();
+        // no need to refresh, just persist
+    });
+
+    // ========== small fix: if storage changes in another tab (rare) we could reload, but not needed.
+    // but we want consistent local storage
+})();
+</script>
+
+<!-- extra note: everything black on yellow, multi‑page, mobile friendly -->
+</body>
+</html>
